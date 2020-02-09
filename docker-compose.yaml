@@ -14,6 +14,7 @@ services:
       - /volume1/Media:/Media
     devices:
       - /dev/dri:/dev/dri
+      
   hydra2:
     image: linuxserver/hydra2:latest
     container_name: hydra2
@@ -24,10 +25,10 @@ services:
       - TZ=Europe/Zurich
     ports:
       - 5076:5076
-      
-    volumes:
+          volumes:
       - /volume1/docker/ssl-keys:/keys
       - /volume1/docker/hydra2:/config
+      
   sonarr4K:
     image: linuxserver/sonarr:latest
     container_name: sonarr4K

@@ -37,7 +37,6 @@ do
 
       mkvmerge $subs $audio -o "${file%.mkv}".edited.mkv "$file";
       mv "${file%.mkv}".edited.mkv "$file"
-      echo "No harmful Subtitles found. Multiplexed file"
       # mv "$1" /media/Trash/;
     fi
 done

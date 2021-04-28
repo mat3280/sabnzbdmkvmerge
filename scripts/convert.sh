@@ -1,5 +1,6 @@
 #!/bin/bash
 mkv () {
+  touch $1
   if [ ! -z "$1" ]
   then
     echo "Starting conversion for $1"

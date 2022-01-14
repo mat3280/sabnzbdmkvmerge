@@ -4,19 +4,19 @@ touch $1
 # then
   echo "Starting conversion for $1"
   file=$(echo "$1")
-  mkvlist=$(mkvmerge -J "$file" | jq -r ' .tracks | map((.id | tostring) + " " + .properties.language + " " + .codec + " " + .type) | join("\n")')
+  mkvlist=$(mkvmerge -J "$file" | jq -r ' .tracks | map("Track ID " + (.id | tostring) + ": " + (.type) + " (" + .codec + ") language:(" + .properties.language + ")") | join("\n")')
   echo "$mkvlist"
-  audio=$("$mkvlist" | sed -ne '/^Track ID: [0-9]*: audio .* language:\(ger\|jpn\|und\).*/ { s/^[^0-9]*\([0-9]*\):.*/\1/;H }; $ { g;s/[^0-9]/,/g;s/^,//;p }')
+  audio=$("$mkvlist" | sed -ne '/^Track ID [0-9]*: audio .* language:\(ger\|jpn\|und\).*/ { s/^[^0-9]*\([0-9]*\):.*/\1/;H }; $ { g;s/[^0-9]/,/g;s/^,//;p }')
   echo "$audio"
   audiocount=$(echo $audio | tr "," "\n" | wc -l)
   echo "1: found $audio ($audiocount) to keep"
 
-subs=$(mkvmerge -I "$file" | sed -ne '/^Track ID [0-9]*: subtitles (SubRip\/SRT).* language:\(ger\|eng\).*/ { s/^[^0-9]*\([0-9]*\):.*/\1/;H }; $ { g;s/[^0-9]/,/g;s/^,//;p }')
+subs=$("$mkvlist" | sed -ne '/^Track ID [0-9]*: subtitles (SubRip\/SRT).* language:\(ger\|eng\).*/ { s/^[^0-9]*\([0-9]*\):.*/\1/;H }; $ { g;s/[^0-9]/,/g;s/^,//;p }')
   subscount=$(echo $subs | tr "," "\n" | wc -l)
   echo "2: found $subs ($subscount) to keep"
 
-  totalaudio=$(mkvmerge -I "$file" | grep audio | wc -l)
-  totalsubs=$(mkvmerge -I "$file" | grep subtitles | wc -l)
+  totalaudio=$("$mkvlist" | grep audio | wc -l)
+  totalsubs=$("$mkvlist" | grep subtitles | wc -l)
 
   diffaudio=$(expr $totalaudio - $audiocount)
   diffsubs=$(expr $totalsubs - $subscount)
